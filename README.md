@@ -22,12 +22,19 @@ Tableau Server is employed to create interactive and visually appealing dashboar
 - Directory Structure
 
 |-- data/
+
 |   |-- Immunizations.txt
+
 |   |-- Patients.txt
+
 |   |-- conditions.txt
+
 |   |-- final_data_for_viz.csv
+
 |-- data_extraction_queries.sql
+
 |-- tableau_dashboard.twb
+
 |-- README.md
 
 
