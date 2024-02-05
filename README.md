@@ -25,7 +25,7 @@ Tableau Server is employed to create interactive and visually appealing dashboar
 ├── extraction_queries.sql                    
 ├── tableau_dashboard.twb                   
 ├── LICENSE
-└── README.md
+├── README.md
 
 
 Dependencies
