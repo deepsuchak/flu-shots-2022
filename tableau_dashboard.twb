@@ -1,0 +1,624 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 20233.24.0112.1233                               -->
+<workbook original-version='18.1' source-build='2023.3.2 (20233.24.0112.1233)' source-platform='win' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <document-format-change-manifest>
+    <_.fcp.AnimationOnByDefault.true...AnimationOnByDefault />
+    <_.fcp.MarkAnimation.true...MarkAnimation />
+    <_.fcp.ObjectModelEncapsulateLegacy.true...ObjectModelEncapsulateLegacy />
+    <_.fcp.ObjectModelTableType.true...ObjectModelTableType />
+    <_.fcp.SchemaViewerObjectModel.true...SchemaViewerObjectModel />
+    <SheetIdentifierTracking />
+    <WindowsPersistSimpleIdentifiers />
+  </document-format-change-manifest>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <_.fcp.AnimationOnByDefault.false...style>
+    <_.fcp.AnimationOnByDefault.false..._.fcp.MarkAnimation.true...style-rule element='animation'>
+      <_.fcp.AnimationOnByDefault.false...format attr='animation-on' value='ao-on' />
+    </_.fcp.AnimationOnByDefault.false..._.fcp.MarkAnimation.true...style-rule>
+  </_.fcp.AnimationOnByDefault.false...style>
+  <datasources>
+    <datasource caption='Custom SQL Query (postgres)' inline='true' name='federated.0xii7j31qrdezw182ueir1v58foa' version='18.1'>
+      <connection class='federated'>
+        <named-connections>
+          <named-connection caption='localhost' name='postgres.0y7vn621fv2ybj12tvi4b143p50b'>
+            <connection authentication='username-password' class='postgres' dbname='postgres' one-time-sql='' port='5432' server='localhost' username='postgres' />
+          </named-connection>
+        </named-connections>
+        <_.fcp.ObjectModelEncapsulateLegacy.false...relation connection='postgres.0y7vn621fv2ybj12tvi4b143p50b' name='Custom SQL Query' type='text'>-- Objectives:&#13;
+&#13;
+-- Come up with flu shots dashboard for 2022 that includes&#13;
+-- 1 Total % of patients getting flu shots stratified by &#13;
+-- a. age,race,county (map), overall&#13;
+-- 2 Running total flu shots over the course of 2022&#13;
+-- 3 total number of flu shots given in 2022&#13;
+-- 4 a list of patients that show whether or not they received the flu shots&#13;
+&#13;
+-- Underlying assumption:&#13;
+-- Patients must have &quot;Active at our hospital&quot;&#13;
+-- Patients age should be 6 months and older&#13;
+&#13;
+&#13;
+with active_patients as&#13;
+(&#13;
+	select distinct patient,EXTRACT(EPOCH FROM age(&apos;2022-12-31&apos;,pat.birthdate)) / 2592000&#13;
+	from encounters as e&#13;
+	join patients as pat&#13;
+	  on e.patient = pat.id&#13;
+	where start between &apos;2020-01-01 00:00&apos; and &apos;2022-12-31 23:59&apos;&#13;
+	  and pat.deathdate is null&#13;
+-- 	EXTRACT(EPOCH FROM age(&apos;2022-12-31&apos;,pat.birthdate)) / 2592000&#13;
+),&#13;
+&#13;
+flu_shot_2022 as&#13;
+(&#13;
+select patient, min(date) as earliest_flu_shot_2022 &#13;
+from immunizations&#13;
+where code = &apos;5302&apos;&#13;
+  and date between &apos;2022-01-01 00:00&apos; and &apos;2022-12-31 23:59&apos;&#13;
+group by patient&#13;
+)&#13;
+&#13;
+select pat.birthdate&#13;
+      ,pat.race&#13;
+	  ,pat.county&#13;
+	  ,pat.id&#13;
+	  ,pat.first&#13;
+	  ,pat.last&#13;
+	  ,pat.gender&#13;
+	  ,extract(YEAR FROM age(&apos;12-31-2022&apos;, birthdate)) as age&#13;
+	  ,flu.earliest_flu_shot_2022&#13;
+	  ,flu.patient&#13;
+	  ,case when flu.patient is not null then 1 &#13;
+	   else 0&#13;
+	   end as flu_shot_2022&#13;
+from patients as pat&#13;
+left join flu_shot_2022 as flu&#13;
+  on pat.id = flu.patient&#13;
+where 1=1&#13;
+  and pat.id in (select patient from active_patients)</_.fcp.ObjectModelEncapsulateLegacy.false...relation>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...relation connection='postgres.0y7vn621fv2ybj12tvi4b143p50b' name='Custom SQL Query' type='text'>-- Objectives:&#13;
+&#13;
+-- Come up with flu shots dashboard for 2022 that includes&#13;
+-- 1 Total % of patients getting flu shots stratified by &#13;
+-- a. age,race,county (map), overall&#13;
+-- 2 Running total flu shots over the course of 2022&#13;
+-- 3 total number of flu shots given in 2022&#13;
+-- 4 a list of patients that show whether or not they received the flu shots&#13;
+&#13;
+-- Underlying assumption:&#13;
+-- Patients must have &quot;Active at our hospital&quot;&#13;
+-- Patients age should be 6 months and older&#13;
+&#13;
+&#13;
+with active_patients as&#13;
+(&#13;
+	select distinct patient,EXTRACT(EPOCH FROM age(&apos;2022-12-31&apos;,pat.birthdate)) / 2592000&#13;
+	from encounters as e&#13;
+	join patients as pat&#13;
+	  on e.patient = pat.id&#13;
+	where start between &apos;2020-01-01 00:00&apos; and &apos;2022-12-31 23:59&apos;&#13;
+	  and pat.deathdate is null&#13;
+-- 	EXTRACT(EPOCH FROM age(&apos;2022-12-31&apos;,pat.birthdate)) / 2592000&#13;
+),&#13;
+&#13;
+flu_shot_2022 as&#13;
+(&#13;
+select patient, min(date) as earliest_flu_shot_2022 &#13;
+from immunizations&#13;
+where code = &apos;5302&apos;&#13;
+  and date between &apos;2022-01-01 00:00&apos; and &apos;2022-12-31 23:59&apos;&#13;
+group by patient&#13;
+)&#13;
+&#13;
+select pat.birthdate&#13;
+      ,pat.race&#13;
+	  ,pat.county&#13;
+	  ,pat.id&#13;
+	  ,pat.first&#13;
+	  ,pat.last&#13;
+	  ,pat.gender&#13;
+	  ,extract(YEAR FROM age(&apos;12-31-2022&apos;, birthdate)) as age&#13;
+	  ,flu.earliest_flu_shot_2022&#13;
+	  ,flu.patient&#13;
+	  ,case when flu.patient is not null then 1 &#13;
+	   else 0&#13;
+	   end as flu_shot_2022&#13;
+from patients as pat&#13;
+left join flu_shot_2022 as flu&#13;
+  on pat.id = flu.patient&#13;
+where 1=1&#13;
+  and pat.id in (select patient from active_patients)</_.fcp.ObjectModelEncapsulateLegacy.true...relation>
+        <metadata-records>
+          <metadata-record class='column'>
+            <remote-name>birthdate</remote-name>
+            <remote-type>7</remote-type>
+            <local-name>[birthdate]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>birthdate</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>date</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>race</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[race]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>race</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <attributes>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>county</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[county]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>county</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <attributes>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>id</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[id]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>id</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <attributes>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>first</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[first]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>first</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <attributes>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>last</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[last]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>last</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <attributes>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>gender</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[gender]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>gender</remote-alias>
+            <ordinal>7</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <attributes>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>age</remote-name>
+            <remote-type>131</remote-type>
+            <local-name>[age]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>age</remote-alias>
+            <ordinal>8</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <scale>0</scale>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>earliest_flu_shot_2022</remote-name>
+            <remote-type>135</remote-type>
+            <local-name>[earliest_flu_shot_2022]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>earliest_flu_shot_2022</remote-alias>
+            <ordinal>9</ordinal>
+            <local-type>datetime</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>patient</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[patient]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>patient</remote-alias>
+            <ordinal>10</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <attributes>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>flu_shot_2022</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[flu_shot_2022]</local-name>
+            <parent-name>[Custom SQL Query]</parent-name>
+            <remote-alias>flu_shot_2022</remote-alias>
+            <ordinal>11</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[_6431BA453B834D91A7A4ECC6200AA4A1]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column caption='Age Range' datatype='string' name='[Calculation_1350235514861064192]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='IF [age] &gt;=0 and [age] &lt;=17 THEN &apos;0-17&apos;&#13;&#10;ELSEIF  [age] &gt;=18 and [age] &lt;=34 THEN &apos;18-34&apos;&#13;&#10;ELSEIF  [age] &gt;=35 and [age] &lt;=49 THEN &apos;35-49&apos;&#13;&#10;ELSEIF  [age] &gt;=50 and [age] &lt;=64 THEN &apos;50-64&apos;&#13;&#10;ELSEIF  [age] &gt;=65 THEN &apos;65+&apos;&#13;&#10;END' />
+      </column>
+      <column caption='# of records' datatype='integer' name='[Calculation_1350235514864832513]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='1' />
+      </column>
+      <_.fcp.ObjectModelTableType.true...column caption='Custom SQL Query' datatype='table' name='[__tableau_internal_object_id__].[_6431BA453B834D91A7A4ECC6200AA4A1]' role='measure' type='quantitative' />
+      <column datatype='string' name='[county]' role='dimension' semantic-role='[County].[Name]' type='nominal' />
+      <column datatype='integer' name='[flu_shot_2022]' role='measure' type='quantitative' />
+      <column-instance column='[Calculation_1350235514864832513]' derivation='Avg' name='[avg:Calculation_1350235514864832513:qk]' pivot='key' type='quantitative' />
+      <column-instance column='[flu_shot_2022]' derivation='Avg' name='[avg:flu_shot_2022:qk]' pivot='key' type='quantitative' />
+      <layout _.fcp.SchemaViewerObjectModel.false...dim-percentage='0.5' _.fcp.SchemaViewerObjectModel.false...measure-percentage='0.4' dim-ordering='alphabetic' measure-ordering='alphabetic' show-structure='true' />
+      <style>
+        <style-rule element='mark'>
+          <encoding attr='color' field='[:Measure Names]' type='palette'>
+            <map to='#005f9c'>
+              <bucket>&quot;[federated.0xii7j31qrdezw182ueir1v58foa].[avg:flu_shot_2022:qk]&quot;</bucket>
+            </map>
+            <map to='#57ecb2'>
+              <bucket>&quot;[federated.0xii7j31qrdezw182ueir1v58foa].[avg:Calculation_1350235514864832513:qk]&quot;</bucket>
+            </map>
+          </encoding>
+        </style-rule>
+      </style>
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
+      </semantic-values>
+      <_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+        <objects>
+          <object caption='Custom SQL Query' id='_6431BA453B834D91A7A4ECC6200AA4A1'>
+            <properties context=''>
+              <relation connection='postgres.0y7vn621fv2ybj12tvi4b143p50b' name='Custom SQL Query' type='text'>-- Objectives:&#13;
+&#13;
+-- Come up with flu shots dashboard for 2022 that includes&#13;
+-- 1 Total % of patients getting flu shots stratified by &#13;
+-- a. age,race,county (map), overall&#13;
+-- 2 Running total flu shots over the course of 2022&#13;
+-- 3 total number of flu shots given in 2022&#13;
+-- 4 a list of patients that show whether or not they received the flu shots&#13;
+&#13;
+-- Underlying assumption:&#13;
+-- Patients must have &quot;Active at our hospital&quot;&#13;
+-- Patients age should be 6 months and older&#13;
+&#13;
+&#13;
+with active_patients as&#13;
+(&#13;
+	select distinct patient,EXTRACT(EPOCH FROM age(&apos;2022-12-31&apos;,pat.birthdate)) / 2592000&#13;
+	from encounters as e&#13;
+	join patients as pat&#13;
+	  on e.patient = pat.id&#13;
+	where start between &apos;2020-01-01 00:00&apos; and &apos;2022-12-31 23:59&apos;&#13;
+	  and pat.deathdate is null&#13;
+-- 	EXTRACT(EPOCH FROM age(&apos;2022-12-31&apos;,pat.birthdate)) / 2592000&#13;
+),&#13;
+&#13;
+flu_shot_2022 as&#13;
+(&#13;
+select patient, min(date) as earliest_flu_shot_2022 &#13;
+from immunizations&#13;
+where code = &apos;5302&apos;&#13;
+  and date between &apos;2022-01-01 00:00&apos; and &apos;2022-12-31 23:59&apos;&#13;
+group by patient&#13;
+)&#13;
+&#13;
+select pat.birthdate&#13;
+      ,pat.race&#13;
+	  ,pat.county&#13;
+	  ,pat.id&#13;
+	  ,pat.first&#13;
+	  ,pat.last&#13;
+	  ,pat.gender&#13;
+	  ,extract(YEAR FROM age(&apos;12-31-2022&apos;, birthdate)) as age&#13;
+	  ,flu.earliest_flu_shot_2022&#13;
+	  ,flu.patient&#13;
+	  ,case when flu.patient is not null then 1 &#13;
+	   else 0&#13;
+	   end as flu_shot_2022&#13;
+from patients as pat&#13;
+left join flu_shot_2022 as flu&#13;
+  on pat.id = flu.patient&#13;
+where 1=1&#13;
+  and pat.id in (select patient from active_patients)</relation>
+            </properties>
+          </object>
+        </objects>
+      </_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Sheet 1'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run fontcolor='#ffffff' fontname='Tableau Medium'>Flu Shots by Age</run>
+          </formatted-text>
+        </title>
+      </layout-options>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Custom SQL Query (postgres)' name='federated.0xii7j31qrdezw182ueir1v58foa' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0xii7j31qrdezw182ueir1v58foa'>
+            <column caption='Age Range' datatype='string' name='[Calculation_1350235514861064192]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='IF [age] &gt;=0 and [age] &lt;=17 THEN &apos;0-17&apos;&#13;&#10;ELSEIF  [age] &gt;=18 and [age] &lt;=34 THEN &apos;18-34&apos;&#13;&#10;ELSEIF  [age] &gt;=35 and [age] &lt;=49 THEN &apos;35-49&apos;&#13;&#10;ELSEIF  [age] &gt;=50 and [age] &lt;=64 THEN &apos;50-64&apos;&#13;&#10;ELSEIF  [age] &gt;=65 THEN &apos;65+&apos;&#13;&#10;END' />
+            </column>
+            <column caption='# of records' datatype='integer' name='[Calculation_1350235514864832513]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='1' />
+            </column>
+            <column datatype='real' name='[age]' role='measure' type='quantitative' />
+            <column-instance column='[Calculation_1350235514864832513]' derivation='Avg' name='[avg:Calculation_1350235514864832513:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[flu_shot_2022]' derivation='Avg' name='[avg:flu_shot_2022:qk]' pivot='key' type='quantitative' />
+            <column datatype='integer' name='[flu_shot_2022]' role='measure' type='quantitative' />
+            <column-instance column='[Calculation_1350235514861064192]' derivation='None' name='[none:Calculation_1350235514861064192:nk]' pivot='key' type='nominal' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='axis'>
+            <encoding attr='space' class='0' field='[federated.0xii7j31qrdezw182ueir1v58foa].[avg:flu_shot_2022:qk]' field-type='quantitative' fold='true' scope='cols' type='space' />
+            <format attr='height' field='[federated.0xii7j31qrdezw182ueir1v58foa].[avg:Calculation_1350235514864832513:qk]' value='51' />
+            <format attr='height' field='[federated.0xii7j31qrdezw182ueir1v58foa].[avg:flu_shot_2022:qk]' value='51' />
+            <format attr='display' class='0' field='[federated.0xii7j31qrdezw182ueir1v58foa].[avg:flu_shot_2022:qk]' scope='cols' value='false' />
+            <format attr='display' class='0' field='[federated.0xii7j31qrdezw182ueir1v58foa].[avg:Calculation_1350235514864832513:qk]' scope='cols' value='false' />
+          </style-rule>
+          <style-rule element='cell'>
+            <format attr='height' field='[federated.0xii7j31qrdezw182ueir1v58foa].[none:Calculation_1350235514861064192:nk]' value='64' />
+            <format attr='color' value='#005f9c' />
+          </style-rule>
+          <style-rule element='header'>
+            <format attr='color' data-class='subtotal' field='[federated.0xii7j31qrdezw182ueir1v58foa].[none:Calculation_1350235514861064192:nk]' value='#ffffff' />
+            <format attr='background-color' field='[federated.0xii7j31qrdezw182ueir1v58foa].[none:Calculation_1350235514861064192:nk]' value='#2b3048' />
+          </style-rule>
+          <style-rule element='label'>
+            <format attr='color' field='[federated.0xii7j31qrdezw182ueir1v58foa].[none:Calculation_1350235514861064192:nk]' value='#ffffff' />
+            <format attr='font-family' field='[federated.0xii7j31qrdezw182ueir1v58foa].[none:Calculation_1350235514861064192:nk]' value='Tableau Medium' />
+          </style-rule>
+          <style-rule element='table'>
+            <format attr='background-color' value='#2b3048' />
+          </style-rule>
+          <style-rule element='gridline'>
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
+          </style-rule>
+          <style-rule element='zeroline'>
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
+          </style-rule>
+          <style-rule element='table-div'>
+            <format attr='stroke-size' scope='rows' value='0' />
+            <format attr='line-visibility' scope='rows' value='off' />
+            <format attr='stroke-size' scope='cols' value='0' />
+            <format attr='line-visibility' scope='cols' value='off' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+            <encodings>
+              <color column='[federated.0xii7j31qrdezw182ueir1v58foa].[:Measure Names]' />
+            </encodings>
+            <style>
+              <style-rule element='pane'>
+                <format attr='minheight' value='-1' />
+                <format attr='maxheight' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+          <pane id='1' selection-relaxation-option='selection-relaxation-allow' x-axis-name='[federated.0xii7j31qrdezw182ueir1v58foa].[avg:Calculation_1350235514864832513:qk]'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+            <encodings>
+              <color column='[federated.0xii7j31qrdezw182ueir1v58foa].[:Measure Names]' />
+            </encodings>
+          </pane>
+          <pane id='2' selection-relaxation-option='selection-relaxation-allow' x-axis-name='[federated.0xii7j31qrdezw182ueir1v58foa].[avg:flu_shot_2022:qk]'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+            <encodings>
+              <color column='[federated.0xii7j31qrdezw182ueir1v58foa].[:Measure Names]' />
+            </encodings>
+          </pane>
+        </panes>
+        <rows>[federated.0xii7j31qrdezw182ueir1v58foa].[none:Calculation_1350235514861064192:nk]</rows>
+        <cols>([federated.0xii7j31qrdezw182ueir1v58foa].[avg:Calculation_1350235514864832513:qk] + [federated.0xii7j31qrdezw182ueir1v58foa].[avg:flu_shot_2022:qk])</cols>
+      </table>
+      <simple-id uuid='{5DDC8DBD-A6A7-44D4-B81B-D96DA5E1C9F9}' />
+    </worksheet>
+  </worksheets>
+  <windows saved-dpi-scale-factor='1.5' source-height='44'>
+    <window class='worksheet' maximized='true' name='Sheet 1'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='30'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card pane-specification-id='1' param='[federated.0xii7j31qrdezw182ueir1v58foa].[:Measure Names]' type='color' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <highlight>
+          <color-one-way>
+            <field>[federated.0xii7j31qrdezw182ueir1v58foa].[none:Calculation_1350235514861064192:nk]</field>
+          </color-one-way>
+        </highlight>
+      </viewpoint>
+      <simple-id uuid='{EA457169-871D-4AAF-A942-4CAEA6240B90}' />
+    </window>
+  </windows>
+  <thumbnails>
+    <thumbnail height='192' name='Sheet 1' width='192'>
+      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
+    </thumbnail>
+  </thumbnails>
+</workbook>
