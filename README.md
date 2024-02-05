@@ -1,17 +1,17 @@
 # Healthcare Analytics Project: Massachusetts Flu Shots
 
 Table of Contents
-Overview
-Data Collection
-Data Extraction
-Data Loading
-Server Configuration
-Visualization
-Directory Structure
-Dependencies
-Getting Started
-Contributing
-License
+- Overview
+- Data Collection
+- Data Extraction
+- Data Loading
+- Server Configuration
+- Visualization
+- Directory Structure
+- Dependencies
+- Getting Started
+- Contributing
+- License
 
 Overview
 This project focuses on healthcare analytics, specifically analyzing the number of flu shots given in the state of Massachusetts. The data has been generated using Synthea, a tool that emulates real-world healthcare data, and PostgreSQL is used for querying and extracting relevant information. The extracted data is then visualized using Tableau Server to create informative dashboards.
