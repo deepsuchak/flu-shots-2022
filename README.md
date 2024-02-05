@@ -20,22 +20,12 @@ PostgreSQL drivers are connected to Tableau Server, enabling seamless communicat
 Tableau Server is employed to create interactive and visually appealing dashboards that provide insights into the number of flu shots given in Massachusetts. The dashboards offer a user-friendly interface for exploring trends, patterns, and key metrics related to flu shot distribution.
 
 - Directory Structure
-
-|-- data/
-
-|   |-- Immunizations.txt
-
-|   |-- Patients.txt
-
-|   |-- conditions.txt
-
-|   |-- final_data_for_viz.csv
-
-|-- data_extraction_queries.sql
-
-|-- tableau_dashboard.twb
-
-|-- README.md
+.                   
+├── data                    
+├── extraction_queries.sql                    
+├── tableau_dashboard.twb                   
+├── LICENSE
+└── README.md
 
 
 Dependencies
